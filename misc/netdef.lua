@@ -3,6 +3,16 @@ require 'nngraph'
 
 netdef={};
 
+function netdef.AnB(nhA,nhB,nhcommon,dropout)
+   dropout = dropout or 0 
+   local q=nn.Identity()();
+   local i=nn.Identity()();
+   local qc=nn.Tanh()(nn.Linear(nhA,nhcommon)(nn.Dropout(dropout)(q)));
+   local ic=nn.Tanh()(nn.Linear(nhB,nhcommon)(nn.Dropout(dropout)(i)));
+   local output=nn.CAddTable()({qc,ic});
+   return nn.gModule({q,i},{output});
+end
+
 function netdef.AxB(nhA,nhB,nhcommon,dropout)
 	dropout = dropout or 0 
 	local q=nn.Identity()();
